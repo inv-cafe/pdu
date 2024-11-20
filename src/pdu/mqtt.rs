@@ -44,10 +44,9 @@ pub async fn start(host: String, tx: OneshotTx, mut rx: Rx) -> Result<()> {
 	});
 	task::spawn(async move {
 		loop {
-			let Ok(Event::Incoming(Incoming::Publish(_p))) = event_loop.poll().await else {
-				continue;
-			};
-			// tracing::info!("{}", String::from_utf8_lossy(&p.payload));
+			if let Ok(Event::Incoming(Incoming::Publish(p))) = event_loop.poll().await {
+				tracing::debug!("{}", String::from_utf8_lossy(&p.payload));
+			}
 		}
 	});
 

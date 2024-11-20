@@ -1,3 +1,7 @@
+//! HAP & MQTT smart majordomo implementation..
+
+#![deny(clippy::all, missing_docs, unused_crate_dependencies)]
+
 mod prelude {
 	pub use std::result::Result as StdResult;
 
@@ -31,7 +35,13 @@ mod util;
 mod waker;
 
 // crates.io
-use clap::Parser;
+use clap::{
+	builder::{
+		styling::{AnsiColor, Effects},
+		Styles,
+	},
+	Parser,
+};
 use hap::server::Server;
 use tracing_subscriber::fmt;
 
@@ -46,6 +56,7 @@ use tracing_subscriber::fmt;
 	),
 	about,
 	rename_all = "kebab",
+	styles = styles(),
 )]
 struct Cli {
 	/// Path to the configuration folder.
@@ -73,4 +84,12 @@ async fn main() -> Result<()> {
 	service.await.map_err(|e| anyhow::anyhow!("{e}"))?;
 
 	Ok(())
+}
+
+fn styles() -> Styles {
+	Styles::styled()
+		.header(AnsiColor::Red.on_default() | Effects::BOLD)
+		.usage(AnsiColor::Red.on_default() | Effects::BOLD)
+		.literal(AnsiColor::Blue.on_default() | Effects::BOLD)
+		.placeholder(AnsiColor::Green.on_default())
 }
